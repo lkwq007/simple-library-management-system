@@ -50,7 +50,7 @@ class Admin
         }
     }
 
-    public function fetch($id)
+    public static function fetch($id)
     {
         global $db;
         $statement = $db->prepare("SELECT * FROM admin WHERE id=?");

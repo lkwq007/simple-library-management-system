@@ -56,7 +56,7 @@ class Book
         }
     }
 
-    public function fetch($bno)
+    public static function fetch($bno)
     {
         global $db;
         $statement = $db->prepare("SELECT * FROM book WHERE bno=?");
@@ -78,7 +78,7 @@ class Book
         }
     }
 
-    public function add_total($bno, $num)
+    public static function add_total($bno, $num)
     {
         global $db;
         $statement = $db->prepare("UPDATE book SET stock=stock+?,total=total+? WHERE bno=?");
@@ -91,7 +91,7 @@ class Book
         }
     }
 
-    public function patch($str)
+    public static function patch($str)
     {
         $data = str_getcsv($str);
         $success=0;
@@ -129,7 +129,7 @@ class Book
         return array("success"=>$success,"fail"=>$fail,"log"=>$fail_log);
     }
 
-    public function borrow($bno)
+    public static function borrow($bno)
     {
         global $db;
         $statement = $db->prepare("UPDATE book SET stock=stock-1 WHERE bno=?");
@@ -142,7 +142,7 @@ class Book
         }
     }
 
-    public function ret($bno)
+    public static function ret($bno)
     {
         global $db;
         $statement = $db->prepare("UPDATE book SET stock=stock+1 WHERE bno=?");
@@ -155,7 +155,7 @@ class Book
         }
     }
 
-    public function search($category = "", $title = "", $press = "", $year_start = 0, $year_end = 99999, $author = "", $price_start = "0", $price_end = "99999.99", $page = 0)
+    public static function search($category = "", $title = "", $press = "", $year_start = 0, $year_end = 99999, $author = "", $price_start = "0", $price_end = "99999.99", $page = 0)
     {
         global $db;
         $statement = $db->prepare("SELECT * FROM book WHERE category LIKE :category AND title LIKE :title AND press LIKE :press AND author LIKE :author AND year BETWEEN :yearstart AND :yearend AND price BETWEEN :pricestart AND :priceend");
