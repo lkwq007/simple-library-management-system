@@ -142,11 +142,11 @@ class Book
         }
     }
 
-    public static function ret($bno)
+    public static function ret($bno,$amount=1)
     {
         global $db;
-        $statement = $db->prepare("UPDATE book SET stock=stock+1 WHERE bno=?");
-        $statement->execute(array($bno));
+        $statement = $db->prepare("UPDATE book SET stock=stock+? WHERE bno=?");
+        $statement->execute(array($amount,$bno));
         $rows = $statement->rowCount();
         if ($rows > 0) {
             return true;

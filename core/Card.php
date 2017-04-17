@@ -12,6 +12,7 @@ class Card
     public $name;
     public $department;
     public $type;
+    //public $bound;
 
     public function __construct($cno, $name = null, $department = null, $type = null)
     {
