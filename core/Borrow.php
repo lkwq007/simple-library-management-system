@@ -34,7 +34,17 @@ class Borrow
         }
         else
         {
-            $this->uuid=null;
+            $this->uuid=0;
+            $result=self::fetch_bno($bno);
+            if(count($result)>0)
+            {
+                $this->return_date=$result[0]['return_date'];
+            }
+            else
+            {
+                $this->return_date=null;
+                $this->uuid=null;
+            }
         }
 
     }
@@ -58,10 +68,10 @@ class Borrow
         $statement = $db->prepare("SELECT UUID()");
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $result[0];
+        return $result[0]['UUID()'];
     }
 
-    public static function fetch($cno)
+    public static function fetch_cno($cno)
     {
         global $db;
         $statement = $db->prepare("SELECT * FROM borrow WHERE cno=?");
@@ -70,9 +80,26 @@ class Borrow
         return $result;
     }
 
-    public static function delete_id($uuid,$bno)
+    public static function fetch_bno($bno)
     {
         global $db;
+        $statement = $db->prepare("SELECT * FROM borrow WHERE bno=? ORDER BY return_date");
+        $statement->execute(array($bno));
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public static function delete_id($uuid)
+    {
+        global $db;
+        $statement=$db->prepare("SELECT bno FROM borrow WHERE uuid=?");
+        $statement->execute(array($uuid));
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        if(count($result)==0)
+        {
+            return false;
+        }
+        $bno=$result[0]['bno'];
         $statement = $db->prepare("DELETE FROM borrow WHERE uuid=?");
         $statement->execute(array($uuid));
         $rows = $statement->rowCount();

@@ -470,7 +470,7 @@ class Engine {
         $code = 200,
         $encode = true,
         $charset = 'utf-8',
-        $option = 0
+        $option = JSON_UNESCAPED_UNICODE
     ) {
         $json = ($encode) ? json_encode($data, $option) : $data;
 
@@ -497,7 +497,7 @@ class Engine {
         $code = 200,
         $encode = true,
         $charset = 'utf-8',
-        $option = 0
+        $option = JSON_UNESCAPED_UNICODE
     ) {
         $json = ($encode) ? json_encode($data, $option) : $data;
 

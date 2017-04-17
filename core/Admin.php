@@ -30,9 +30,8 @@ class Admin
             $this->pwd = $pwd;
             $this->name = $name;
             $this->contact = $contact;
-            if(!$this->insert())
-            {
-                $this->id=null;
+            if (!$this->insert()) {
+                $this->id = null;
             }
         }
     }
@@ -59,10 +58,31 @@ class Admin
         return $result;
     }
 
+    public static function fetch_all()
+    {
+        global $db;
+        $statement = $db->prepare("SELECT * FROM admin");
+        $statement->execute();
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public static function delete($id)
+    {
+        global $db;
+        $statement = $db->prepare("DELETE FROM admin WHERE id=?");
+        $statement->execute(array($id));
+        $rows = $statement->rowCount();
+        if ($rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function verify($pwd)
     {
-        if(is_null($this->id))
-        {
+        if (is_null($this->id)) {
             return false;
         }
         if ($pwd == $this->pwd) {
