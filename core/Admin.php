@@ -61,7 +61,7 @@ class Admin
     public static function fetch_all()
     {
         global $db;
-        $statement = $db->prepare("SELECT * FROM admin");
+        $statement = $db->prepare("SELECT id,name,contact FROM admin");
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;

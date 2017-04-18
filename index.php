@@ -17,19 +17,31 @@ if (!isset($_SESSION['token'])) {
 Flight::set('flight.views.path', 'template');
 
 Flight::route('/', function () {
-    echo 'hello world!';
+    Flight::render('header',array('page'=>Flight::request()->url));
+    Flight::render('home');
+    Flight::render('footer');
 });
 
-Flight::route('/panel',function (){
-    echo 'panel';
-});
-
-Flight::route('/login', function () {
-    if (isset($_SESSION['id'])) {
-        Flight::redirect('/panel');
-    } else {
-        //echo 'need login';
-        Flight::render('login', array('test' => '233'));
+Flight::route('/*',function (){
+    $nav = array('/admin' => 'Admin', '/book' => 'Book', '/card' => 'Card', '/borrow' => 'Borrow');
+    $nav=array_flip($nav);
+    if(in_array(Flight::request()->url,$nav))
+    {
+        if(!isset($_SESSION['id']))
+        {
+            //Flight::redirect('/');
+            return true;
+        }
+        else
+        {
+            Flight::render('header',array('page'=>Flight::request()->url));
+            Flight::render(substr(Flight::request()->url,1));
+            Flight::render('footer');
+        }
+    }
+    else
+    {
+        return true;
     }
 });
 
@@ -37,11 +49,14 @@ Flight::route('/logout', function () {
     unset($_SESSION['id']);
     unset($_SESSION['name']);
     unset($_SESSION['contact']);
+    Flight::redirect('/');
 });
 
 Flight::route('POST /auth', function () {
-    $id = $_POST['id'];
-    $pwd = $_POST['pwd'];
+    //$id = $_POST['id'];
+    //$pwd = $_POST['pwd'];
+    $id=Flight::request()->data['id'];
+    $pwd=Flight::request()->data['pwd'];
     $admin = new Admin($id);
     if ($admin->verify($pwd)) {
         $_SESSION['id'] = $id;
@@ -54,14 +69,18 @@ Flight::route('POST /auth', function () {
 });
 
 Flight::route('POST /admin/add/@id', function ($id) {
-    if (is_null($_POST['pwd']) || is_null($_POST['name']) || is_null($_POST['contact'])) {
+    $data=Flight::request()->data;
+    $pwd=$data['pwd'];
+    $name=$data['name'];
+    $contact=$data['contact'];
+    if (empty($pwd) || empty($name) || empty($contact)) {
         Flight::json(array('status' => 2));
         return false;
     }
     $user = new Admin($id);
     if (is_null($user->id)) {
         unset($user);
-        $user = new Admin($id, $_POST['pwd'], $_POST['name'], $_POST['contact']);
+        $user = new Admin($id, $pwd, $name, $contact);
         if (is_null($user->id)) {
             Flight::json(array('status' => 3));
         } else {
@@ -95,7 +114,7 @@ Flight::route('/admin/info', function () {
     } else {
         Flight::json(array('info' => 'Not permitted'));
     }
-});git 
+});
 
 Flight::route('/admin/info/@id', function ($id) {
     if (isset($_SESSION['id'])) {
@@ -143,17 +162,16 @@ Flight::route('/book/info', function () {
 });
 
 Flight::route('POST /book/search', function () {
-    $json = Flight::request()->data;
-    $data = json_decode($json, true);
-    $temp = array('category' => '', 'title' => '', 'press' => '', 'author' => '', 'year_start' => 0, 'year_end' => 99998, 'price_start' => 0, 'price_end' => 99999.98);
+    $data = Flight::request()->data;
+    $temp = array('year_start' => 0, 'year_end' => 99998, 'price_start' => 0, 'price_end' => 99999.98);
     foreach ($temp as $key => $value) {
-        if (!isset($data[$key])) {
-            $data[$key] = $value;
+        if (is_numeric($data[$key])) {
+            $temp[$key] = $data[$key];
         }
     }
-    $data['year_end']++;
-    $data['price_end'] += 0.01;
-    $result = Book::search($data['category'], $data['title'], $data['press'], $data['year_start'], $data['year_end'], $data['author'], $data['price_start'], $data['price_end']);
+    $temp['year_end']++;
+    $temp['price_end'] += 0.01;
+    $result = Book::search($data['category'], $data['title'], $data['press'], $temp['year_start'], $temp['year_end'], $data['author'], $temp['price_start'], $temp['price_end']);
     Flight::json($result);
 });
 
