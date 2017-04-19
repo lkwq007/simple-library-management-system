@@ -13,5 +13,19 @@
         </div>
     </div>
 </footer>
+<script>
+    var toggle=true;
+    $("#toggle").click(function () {
+        if(toggle)
+        {
+            $(".mobile").addClass("is-active");
+        }
+        else
+        {
+            $(".mobile").removeClass("is-active");
+        }
+        toggle=!toggle;
+    });
+</script>
 </body>
 </html>

@@ -101,6 +101,9 @@
         <div id="jsontotable" class="jsontotable">
 
         </div>
+        <div id="pager" class="pager">
+
+        </div>
     </div>
 </section>
 <div class="modal">
@@ -144,7 +147,7 @@
     $("#login-ok").click(function () {
         $("#error").hide();
         var json=$("form[name='user']").serializeJSON();
-        //json.pwd=md5(json.pwd);
+        json.pwd=md5(json.pwd);
         var data = JSON.stringify(json);
         $.ajax({
             url: "/auth",
@@ -214,7 +217,7 @@
 
         $(this).on('click', 'a', function (e) {
             var temp = $('#title').val();
-            $('form').find("input[type=text], textarea").val("");
+            //$('form').find("input[type=text], textarea").val("");
             $('#title').val(temp);
             $("#jsontotable").empty();
             $active.parent().removeClass('is-active');

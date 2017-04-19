@@ -8,6 +8,7 @@
     <script src="/static/js/jquery.jsontotable.js"></script>
     <script src="/static/js/jquery.serializejson.js"></script>
     <script src="/static/js/jquery.tablesorter.js"></script>
+    <script src="/static/js/jquery.tablesorter.pager.js"></script>
     <script src="/static/js/md5.js"></script>
 </head>
 
@@ -38,12 +39,12 @@
                         <a class="nav-item is-tab is-hidden-mobile">Card</a>
                         <a class="nav-item is-tab is-hidden-mobile">Borrow</a>-->
         </div>
-        <span class="nav-toggle">
+        <span class="nav-toggle mobile" id="toggle">
       <span></span>
       <span></span>
       <span></span>
     </span>
-        <div class="nav-right nav-menu">
+        <div class="nav-right nav-menu mobile">
             <?php
             if (isset($_SESSION['id'])) {
                 $nav = array('/' => 'Home', '/admin' => 'Admin', '/book' => 'Book', '/card' => 'Card', '/borrow' => 'Borrow');

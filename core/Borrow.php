@@ -74,7 +74,7 @@ class Borrow
     public static function fetch_cno($cno)
     {
         global $db;
-        $statement = $db->prepare("SELECT * FROM borrow WHERE cno=?");
+        $statement = $db->prepare("SELECT uuid,cno,bno,title,admin_id,borrow_date,return_date FROM borrow NATURAL JOIN book WHERE cno=?");
         $statement->execute(array($cno));
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;

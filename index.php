@@ -15,48 +15,42 @@ if (!isset($_SESSION['token'])) {
 }
 
 Flight::set('flight.views.path', 'template');
-
+//done
 Flight::route('/', function () {
-    Flight::render('header',array('page'=>Flight::request()->url));
+    Flight::render('header', array('page' => Flight::request()->url));
     Flight::render('home');
     Flight::render('footer');
 });
-
-Flight::route('/*',function (){
+//done
+Flight::route('/*', function () {
     $nav = array('/admin' => 'Admin', '/book' => 'Book', '/card' => 'Card', '/borrow' => 'Borrow');
-    $nav=array_flip($nav);
-    if(in_array(Flight::request()->url,$nav))
-    {
-        if(!isset($_SESSION['id']))
-        {
+    $nav = array_flip($nav);
+    if (in_array(Flight::request()->url, $nav)) {
+        if (!isset($_SESSION['id'])) {
             //Flight::redirect('/');
             return true;
-        }
-        else
-        {
-            Flight::render('header',array('page'=>Flight::request()->url));
-            Flight::render(substr(Flight::request()->url,1));
+        } else {
+            Flight::render('header', array('page' => Flight::request()->url));
+            Flight::render(substr(Flight::request()->url, 1));
             Flight::render('footer');
         }
-    }
-    else
-    {
+    } else {
         return true;
     }
 });
-
+//done
 Flight::route('/logout', function () {
     unset($_SESSION['id']);
     unset($_SESSION['name']);
     unset($_SESSION['contact']);
     Flight::redirect('/');
 });
-
+//done
 Flight::route('POST /auth', function () {
     //$id = $_POST['id'];
     //$pwd = $_POST['pwd'];
-    $id=Flight::request()->data['id'];
-    $pwd=Flight::request()->data['pwd'];
+    $id = Flight::request()->data['id'];
+    $pwd = Flight::request()->data['pwd'];
     $admin = new Admin($id);
     if ($admin->verify($pwd)) {
         $_SESSION['id'] = $id;
@@ -67,12 +61,12 @@ Flight::route('POST /auth', function () {
         Flight::json(array('status' => 1));
     }
 });
-
+//done
 Flight::route('POST /admin/add/@id', function ($id) {
-    $data=Flight::request()->data;
-    $pwd=$data['pwd'];
-    $name=$data['name'];
-    $contact=$data['contact'];
+    $data = Flight::request()->data;
+    $pwd = $data['pwd'];
+    $name = $data['name'];
+    $contact = $data['contact'];
     if (empty($pwd) || empty($name) || empty($contact)) {
         Flight::json(array('status' => 2));
         return false;
@@ -90,7 +84,7 @@ Flight::route('POST /admin/add/@id', function ($id) {
         Flight::json(array('status' => 1));
     }
 });
-
+//done
 Flight::route('/admin/delete/@id', function ($id) {
     if (isset($_SESSION['id'])) {
         if ($_SESSION['id'] == $id) {
@@ -106,7 +100,7 @@ Flight::route('/admin/delete/@id', function ($id) {
         Flight::json(array('status' => 2, 'info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('/admin/info', function () {
     if (isset($_SESSION['id'])) {
         $result = Admin::fetch_all();
@@ -115,7 +109,7 @@ Flight::route('/admin/info', function () {
         Flight::json(array('info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('/admin/info/@id', function ($id) {
     if (isset($_SESSION['id'])) {
         $result = Admin::fetch($id);
@@ -124,12 +118,11 @@ Flight::route('/admin/info/@id', function ($id) {
         Flight::json(array('info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('POST /book/add/@bno', function ($bno) {
     if (isset($_SESSION['id'])) {
-        $json = Flight::request()->data;
-        $info = json_decode($json);
-        $book = new Book($bno, $info->category, $info->title, $info->press, $info->year, $info->author, $info->price, $info->num);
+        $info = Flight::request()->data;
+        $book = new Book($bno, $info['category'], $info['title'], $info['press'], $info['year'], $info['author'], $info['price'], $info['amount']);
         if (is_null($book->bno)) {
             Flight::json(array('status' => 1, 'info' => 'Fail'));
         } else {
@@ -143,24 +136,23 @@ Flight::route('POST /book/add/@bno', function ($bno) {
 Flight::route('POST /book/add', function () {
     if (isset($_SESSION['id'])) {
         $files = Flight::request()->files;
-        var_dump($files);
-        //$info=json_decode($json);
-        //$book=new Book($bno,$info->category,$info->title,$info->press,$info->year,$info->author,$info->price,$info->num);
-        if (false) {
-            Flight::json(array('status' => 1, 'info' => 'Fail'));
+        $info=file_get_contents($files['file']['tmp_name']);
+        $result=Book::patch($info);
+        if ($result['fail']>0) {
+            Flight::json(array('status' => 1, 'info' => $result));
         } else {
-            Flight::json(array('status' => 0, 'info' => 'All Success'));
+            Flight::json(array('status' => 0, 'info' => $result));
         }
     } else {
         Flight::json(array('status' => 2, 'info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('/book/info', function () {
     $result = Book::search();
     Flight::json($result);
 });
-
+//done
 Flight::route('POST /book/search', function () {
     $data = Flight::request()->data;
     $temp = array('year_start' => 0, 'year_end' => 99998, 'price_start' => 0, 'price_end' => 99999.98);
@@ -174,17 +166,28 @@ Flight::route('POST /book/search', function () {
     $result = Book::search($data['category'], $data['title'], $data['press'], $temp['year_start'], $temp['year_end'], $data['author'], $temp['price_start'], $temp['price_end']);
     Flight::json($result);
 });
-
+//done
 Flight::route('/book/info/@bno', function ($bno) {
     $result = Book::fetch($bno);
     Flight::json($result);
 });
-
+//done
+Flight::route('/book/delete/@bno', function ($bno) {
+    if (isset($_SESSION['id'])) {
+        if (Book::delete($bno)) {
+            Flight::json(array('status' => 0, 'info' => 'Success'));
+        } else {
+            Flight::json(array('status' => 1, 'info' => 'Fail'));
+        }
+    } else {
+        Flight::json(array('status' => 2, 'info' => 'Not permitted'));
+    }
+});
+//done
 Flight::route('POST /card/add/@cno', function ($cno) {
     if (isset($_SESSION['id'])) {
-        $json = Flight::request()->data;
-        $info = json_decode($json);
-        $card = new Card($cno, $info->name, $info->department, $info->type);
+        $info = Flight::request()->data;
+        $card = new Card($cno, $info['name'], $info['department'], $info['type']);
         if (is_null($card->cno)) {
             Flight::json(array('status' => 1, 'info' => 'Fail'));
         } else {
@@ -194,7 +197,7 @@ Flight::route('POST /card/add/@cno', function ($cno) {
         Flight::json(array('status' => 2, 'info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('/card/delete/@cno', function ($cno) {
     if (isset($_SESSION['id'])) {
         if (Card::delete($cno)) {
@@ -206,7 +209,7 @@ Flight::route('/card/delete/@cno', function ($cno) {
         Flight::json(array('status' => 2, 'info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('/card/info', function () {
     if (isset($_SESSION['id'])) {
         $result = Card::fetch_all();
@@ -215,7 +218,7 @@ Flight::route('/card/info', function () {
         Flight::json(array('info' => 'Not permitted'));
     }
 });
-
+//done
 Flight::route('/card/info/@cno', function ($cno) {
     if (isset($_SESSION['id'])) {
         $result = Card::fetch($cno);
@@ -236,14 +239,12 @@ Flight::route('/borrow/@cno', function ($cno) {
 
 Flight::route('/borrow/@cno/@bno', function ($cno, $bno) {
     if (isset($_SESSION['id'])) {
-        $borrow = new Borrow($cno, $bno,$_SESSION['id']);
+        $borrow = new Borrow($cno, $bno, $_SESSION['id']);
         if (is_null($borrow->uuid)) {
             Flight::json(array('status' => 1, 'info' => 'Fail'));
-        } elseif ($borrow->uuid==0)
-        {
-            Flight::json(array('status'=>3,'info'=>$borrow->return_date));
-        }
-        else {
+        } elseif ($borrow->uuid == 0) {
+            Flight::json(array('status' => 3, 'info' => $borrow->return_date));
+        } else {
             Flight::json(array('status' => 0, 'info' => 'Success'));
         }
     } else {
@@ -251,9 +252,9 @@ Flight::route('/borrow/@cno/@bno', function ($cno, $bno) {
     }
 });
 
-Flight::route('/return/@cno/@bno',function ($cno,$bno){
+Flight::route('/return/@cno/@bno', function ($cno, $bno) {
     if (isset($_SESSION['id'])) {
-        if (Borrow::delete($cno,$bno)) {
+        if (Borrow::delete($cno, $bno)) {
             Flight::json(array('status' => 0, 'info' => 'Success'));
         } else {
             Flight::json(array('status' => 1, 'info' => 'Fail'));
@@ -263,7 +264,7 @@ Flight::route('/return/@cno/@bno',function ($cno,$bno){
     }
 });
 
-Flight::route('/return-id/@uuid',function ($uuid){
+Flight::route('/return-id/@uuid', function ($uuid) {
     if (isset($_SESSION['id'])) {
         if (Borrow::delete_id($uuid)) {
             Flight::json(array('status' => 0, 'info' => 'Success'));

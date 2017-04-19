@@ -37,7 +37,7 @@ class Book
                 $this->num = $result[0]['stock'];
             }
         } else {
-            if (count($result == 0)) {
+            if (count($result)==0) {
                 $this->bno = $bno;
                 $this->category = $category;
                 $this->title = $title;
@@ -51,6 +51,7 @@ class Book
                     $this->bno = null;
                 }
             } else {
+                $this->bno=$bno;
                 $this->add_total($bno, $num);
             }
         }
@@ -93,11 +94,15 @@ class Book
 
     public static function patch($str)
     {
-        $data = str_getcsv($str);
+        $str=str_replace("( ","",$str);
+        $str=str_replace(" )","",$str);
+        $str=str_replace(", ",",",$str);
+        $temp=explode("\n",$str);
         $success=0;
         $fail=0;
         $fail_log=array();
-        foreach ($data as $item) {
+        foreach ($temp as $data) {
+            $item=str_getcsv($data);
             $result = self::fetch($item[0]);
             if(count($result)==0)
             {
@@ -162,5 +167,18 @@ class Book
         $statement->execute(array(":category" => "%" . $category . "%", ":title" => "%" . $title . "%", ":press" => "%" . $press . "%", ":author" => "%" . $author . "%", ":yearstart" => $year_start, ":yearend" => $year_end, ":pricestart" => $price_start, ":priceend" => $price_end));
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;
+    }
+
+    public static function delete($bno)
+    {
+        global $db;
+        $statement = $db->prepare("DELETE FROM book WHERE bno=?");
+        $statement->execute(array($bno));
+        $rows = $statement->rowCount();
+        if ($rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

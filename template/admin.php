@@ -21,11 +21,11 @@
     <div class="container">
         <div id="notify">
             <div class="notification is-primary" id="success">
-                <button class="delete"></button>
+                <button class="delete close"></button>
                 Operation succeeded!
             </div>
             <div class="notification is-danger" id="fail">
-                <button class="delete"></button>
+                <button class="delete close"></button>
                 Operation failed!
             </div>
             <div style="display: none;">
@@ -37,53 +37,46 @@
     <div class="container">
         <div class="panel">
             <p class="panel-heading">
-                Admins:
-            </p>
-            <div id="jsontotable" class="jsontotable panel-block">
-
-            </div>
-        </div>
-        <div class="panel">
-            <p class="panel-heading">
-                Add admin:
+                Manage admin:
             </p>
             <div class="panel-block">
                 <form name="user">
                     <div class="column">
 
                     </div>
+
                     <div class="columns">
-                        <div class="field is-horizontal column">
+                        <div class="column field is-horizontal">
                             <label class="label field-label">Id</label>
                             <p class="control has-icon has-icon-right">
-                                <input class="input id-input" name="id" type="text" placeholder="Id">
+                                <input class="input field-body" name="id" type="text" placeholder="Id">
                                 <span class="icon user">
                       <i class="fa fa-id-card" aria-hidden="true"></i>
                     </span>
                             </p>
                         </div>
-                        <div class="field is-horizontal column">
+                        <div class="column field is-horizontal">
                             <label class="label field-label">Password</label>
                             <p class="control has-icon has-icon-right">
-                                <input class="input password-input" name="pwd" type="password" placeholder="●●●●●●●">
+                                <input class="input field-body" name="pwd" type="password" placeholder="●●●●●●●">
                                 <span class="icon user">
                       <i class="fa fa-lock"></i>
                     </span>
                             </p>
                         </div>
-                        <div class="field is-horizontal column">
+                        <div class="column field is-horizontal">
                             <label class="label field-label">Name</label>
                             <p class="control has-icon has-icon-right">
-                                <input class="input password-input" name="name" type="text" placeholder="Name">
+                                <input class="input field-body" name="name" type="text" placeholder="Name">
                                 <span class="icon user">
                       <i class="fa fa-user"></i>
                     </span>
                             </p>
                         </div>
-                        <div class="field is-horizontal column">
+                        <div class="column field is-horizontal">
                             <label class="label field-label">Contact</label>
                             <p class="control has-icon has-icon-right">
-                                <input class="input password-input" name="contact" type="contact" placeholder="Contact">
+                                <input class="input field-body" name="contact" type="contact" placeholder="Contact">
                                 <span class="icon user">
                       <i class="fa fa-address-book" aria-hidden="true"></i>
                     </span>
@@ -113,6 +106,15 @@
                 </div>
             </div>
         </div>
+        <div class="panel">
+            <p class="panel-heading">
+                Admins:
+            </p>
+            <div id="jsontotable" class="jsontotable panel-block">
+
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -136,14 +138,12 @@
         $(".notification").hide();
     });
     function notice(status) {
-        if(status==0)
-        {
-            $("#success").show(200);
+        if (status == 0) {
+            $("#success").show(500);
             get_admin();
         }
-        else
-        {
-            $("#fail").show(200);
+        else {
+            $("#fail").show(500);
         }
     }
     $("#delete").click(function () {
@@ -151,16 +151,17 @@
         var json = $("form[name='user']").serializeJSON();
         var temp;
         temp = json.id;
-        $.get("/admin/delete" + temp, function (result) {
+        $.get("/admin/delete/" + temp, function (result) {
             notice(result.status);
         });
     });
     $("#add").click(function () {
         $(".notification").hide(500);
         var json = $("form[name='user']").serializeJSON();
+        json.pwd=md5(json.pwd);
         var data = JSON.stringify(json);
         $.ajax({
-            url: "/admin/add/"+json.id,
+            url: "/admin/add/" + json.id,
             type: "POST",
             data: data,
             contentType: "application/json",
@@ -174,4 +175,7 @@
     $("#reset").click(function () {
         $('form').find("input[type=text], textarea").val("");
     });
+    $(".close").click(function () {
+        $(".close").parent().hide(500);
+    })
 </script>
