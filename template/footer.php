@@ -3,7 +3,7 @@
         <div class="content has-text-centered">
             <p>
                 <strong>Simple Library Management System</strong>. Powered by <a href="http://bulma.io">Bulma</a> and <a
-                    href="http://flightphp.com/">Flight</a>. The source code is released in GitHub.
+                    href="http://flightphp.com/">Flight</a>. Fork me on GitHub!
             </p>
             <p>
                 <a class="icon" href="https://github.com/lkwq007/simple-library-management-system">

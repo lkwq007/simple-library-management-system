@@ -5,7 +5,7 @@
             this.on("success", function (data) {
                 console.log(data);
                 var temp=JSON.parse(data.xhr.response);
-                notice(temp.status);
+                notice_info(temp);
             });
         }
     };
@@ -35,11 +35,11 @@
         <div id="notify">
             <div class="notification is-primary" id="success">
                 <button class="delete close"></button>
-                Operation succeeded!
+                Operation succeeded! <span class="infos"></span>
             </div>
             <div class="notification is-danger" id="fail">
                 <button class="delete close"></button>
-                Operation failed!
+                Operation failed! <span class="infos"></span>
             </div>
             <div style="display: none;">
                 <button class="delete"></button>
@@ -184,8 +184,22 @@
         $(".notification").hide();
     });
     function notice(status) {
+        $(".infos").empty();
         console.log(status);
         if (status == 0) {
+            $("#success").show(500);
+            get_admin();
+        }
+        else {
+            $("#fail").show(500);
+        }
+    }
+    function notice_info(data) {
+        console.log(data);
+        $(".infos").empty();
+        var temp=data.info.success+data.info.fail;
+        $(".infos").html(" Patched "+data.info.success+"/"+temp);
+        if (data.status == 0) {
             $("#success").show(500);
             get_admin();
         }
