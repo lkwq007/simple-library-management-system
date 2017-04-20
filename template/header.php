@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Simple Library Management System</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/css/bulma.css">
     <link rel="stylesheet" href="/static/css/font-awesome.min.css">
     <script src="/static/js/jquery-3.2.1.js"></script>
