@@ -33,7 +33,7 @@ class Card
             $this->name = $name;
             $this->type = $type;
             if (!$this->insert()) {
-                $this->id = null;
+                $this->cno = null;
             }
         }
     }

@@ -163,7 +163,7 @@ class Book
     public static function search($category = "", $title = "", $press = "", $year_start = 0, $year_end = 99999, $author = "", $price_start = "0", $price_end = "99999.99", $page = 0)
     {
         global $db;
-        $statement = $db->prepare("SELECT * FROM book WHERE category LIKE :category AND title LIKE :title AND press LIKE :press AND author LIKE :author AND year BETWEEN :yearstart AND :yearend AND price BETWEEN :pricestart AND :priceend");
+        $statement = $db->prepare("SELECT * FROM book WHERE category LIKE :category AND title LIKE :title AND press LIKE :press AND author LIKE :author AND year BETWEEN :yearstart AND :yearend AND price BETWEEN :pricestart AND :priceend ORDER BY title");
         $statement->execute(array(":category" => "%" . $category . "%", ":title" => "%" . $title . "%", ":press" => "%" . $press . "%", ":author" => "%" . $author . "%", ":yearstart" => $year_start, ":yearend" => $year_end, ":pricestart" => $price_start, ":priceend" => $price_end));
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $result;
