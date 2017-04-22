@@ -22,11 +22,11 @@
         <div id="notify">
             <div class="notification is-primary" id="success">
                 <button class="delete close"></button>
-                Operation succeeded!
+                <span class="infos"></span> - Operation succeeded!
             </div>
             <div class="notification is-danger" id="fail">
                 <button class="delete close"></button>
-                Operation failed!
+                <span class="infos"></span> - Operation failed!
             </div>
             <div style="display: none;">
                 <button class="delete"></button>
@@ -137,7 +137,9 @@
         get_admin();
         $(".notification").hide();
     });
-    function notice(status) {
+    function notice(status,op) {
+        $(".infos").empty();
+        $(".infos").html(op);
         if (status == 0) {
             $("#success").show(500);
             get_admin();
@@ -152,7 +154,7 @@
         var temp;
         temp = json.id;
         $.get("/admin/delete/" + temp, function (result) {
-            notice(result.status);
+            notice(result.status,"Delete admin '"+temp+"'");
         });
     });
     $("#add").click(function () {
@@ -168,7 +170,7 @@
             dataType: "json",
             success: function (result) {
                 console.log(result);
-                notice(result.status);
+                notice(result.status,"Add admin '"+json.id+"'");
             }
         })
     });

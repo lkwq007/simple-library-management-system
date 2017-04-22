@@ -24,11 +24,11 @@
         <div id="notify">
             <div class="notification is-primary" id="success">
                 <button class="delete close"></button>
-                Operation succeeded!
+                <span class="infos"></span> - Operation succeeded!
             </div>
             <div class="notification is-danger" id="fail">
                 <button class="delete close"></button>
-                Operation failed! <span id="infos"></span>
+                <span class="infos"></span> - Operation failed!
             </div>
             <div style="display: none;">
                 <button class="delete"></button>
@@ -137,16 +137,17 @@
     }
     function delete_loan(cno, bno) {
         $.get("/return/" + cno + "/" + bno, function (result) {
-            notice(result);
+            notice(result,cno+" return "+bno);
         });
     }
     function delete_loan_id(uuid) {
         $.get("/return-id/" + uuid, function (result) {
-            notice(result);
+            notice(result,"Return loan id: "+uuid);
         });
     }
-    function notice(result) {
-        $("#infos").empty();
+    function notice(result,op) {
+        $(".infos").empty();
+        $(".infos").html(op);
         switch (result.status) {
             case 0:
                 $("#success").show(500);
@@ -160,7 +161,8 @@
             case 3:
                 $("#fail").show(500);
                 console.log(result.info);
-                $("#infos").html("Latest due date: "+result.info);
+                $(".infos").empty();
+                $(".infos").html(op+" Latest due date: "+result.info);
                 break;
             default:
                 $("#fail").show(500);
@@ -186,7 +188,7 @@
         var json = $("form[name='borrows']").serializeJSON();
         $.get("/borrow/" + json.cno + "/" + json.bno, function (result) {
             console.log(result);
-            notice(result);
+            notice(result,json.cno+" borrow "+json.bno);
         });
 
     });

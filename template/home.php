@@ -128,7 +128,7 @@
                       <i class="fa fa-lock"></i>
                     </span>
                     </p>
-                    <p class="help is-danger" id="error" style="display: none;">id or password error.</p>
+                    <p class="help is-danger" id="error" style="display: none;">Incorrect id or password.</p>
                 </div>
             </form>
         </section>

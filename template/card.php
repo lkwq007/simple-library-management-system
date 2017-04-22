@@ -24,11 +24,11 @@
         <div id="notify">
             <div class="notification is-primary" id="success">
                 <button class="delete close"></button>
-                Operation succeeded!
+                <span class="infos"></span> - Operation succeeded!
             </div>
             <div class="notification is-danger" id="fail">
                 <button class="delete close"></button>
-                Operation failed!
+                <span class="infos"></span> - Operation failed!
             </div>
             <div style="display: none;">
                 <button class="delete"></button>
@@ -68,7 +68,8 @@
                         <div class="field is-horizontal column">
                             <label class="label field-label">Department</label>
                             <p class="control has-icon has-icon-right">
-                                <input class="input password-input" name="department" type="text" placeholder="Department">
+                                <input class="input password-input" name="department" type="text"
+                                       placeholder="Department">
                                 <span class="icon user">
                       <i class="fa fa-building" aria-hidden="true"></i>
                     </span>
@@ -77,14 +78,14 @@
                         <div class="field is-horizontal column">
                             <label class="label field-label">Type</label>
                             <p class="control">
-                                <div class="select is-fullwidth">
-                                    <select name="type">
-                                        <option value="S">Student</option>
-                                        <option value="T">Teacher</option>
-                                    </select>
-                                </div>
+                            <div class="select is-fullwidth">
+                                <select name="type">
+                                    <option value="S">Student</option>
+                                    <option value="T">Teacher</option>
+                                </select>
+                            </div>
                             </p>
-                    </span>
+                            </span>
                             </p>
                         </div>
 
@@ -134,15 +135,12 @@
                 "type": "Type"
             });
             var i;
-            for(i=0;i<result.length;i++)
-            {
-                if(result[i].type=='T')
-                {
-                    result[i].type='Teacher';
+            for (i = 0; i < result.length; i++) {
+                if (result[i].type == 'T') {
+                    result[i].type = 'Teacher';
                 }
-                else if(result[i].type=='S')
-                {
-                    result[i].type='Student';
+                else if (result[i].type == 'S') {
+                    result[i].type = 'Student';
                 }
             }
             $.jsontotable(result, {id: '#jsontotable', header: true, className: 'table is-striped'});
@@ -152,14 +150,16 @@
     }
     function delete_card(cno) {
         $.get("/card/delete/" + cno, function (result) {
-            notice(result.status);
+            notice(result.status, "Delete card '" + cno + "'");
         });
     }
     $(document).ready(function () {
         get_card();
         $(".notification").hide();
     });
-    function notice(status) {
+    function notice(status, op) {
+        $(".infos").empty();
+        $(".infos").html(op);
         if (status == 0) {
             $("#success").show(500);
             get_card();
@@ -187,7 +187,7 @@
             dataType: "json",
             success: function (result) {
                 console.log(result);
-                notice(result.status);
+                notice(result.status, "Add card '" + json.cno + "'");
             }
         })
     });

@@ -4,7 +4,8 @@
         init: function () {
             this.on("success", function (data) {
                 console.log(data);
-                var temp=JSON.parse(data.xhr.response);
+                $(".notification").hide(500);
+                var temp = JSON.parse(data.xhr.response);
                 notice_info(temp);
             });
         }
@@ -35,11 +36,11 @@
         <div id="notify">
             <div class="notification is-primary" id="success">
                 <button class="delete close"></button>
-                Operation succeeded! <span class="infos"></span>
+                <span class="infos"></span> - Operation succeeded!
             </div>
             <div class="notification is-danger" id="fail">
                 <button class="delete close"></button>
-                Operation failed! <span class="infos"></span>
+                <span class="infos"></span> - Operation failed!
             </div>
             <div style="display: none;">
                 <button class="delete"></button>
@@ -183,8 +184,9 @@
         get_admin();
         $(".notification").hide();
     });
-    function notice(status) {
+    function notice(status, op) {
         $(".infos").empty();
+        $(".infos").html(op);
         console.log(status);
         if (status == 0) {
             $("#success").show(500);
@@ -197,8 +199,8 @@
     function notice_info(data) {
         console.log(data);
         $(".infos").empty();
-        var temp=data.info.success+data.info.fail;
-        $(".infos").html(" Patched "+data.info.success+"/"+temp);
+        var temp = data.info.success + data.info.fail;
+        $(".infos").html(" Patched " + data.info.success + "/" + temp);
         if (data.status == 0) {
             $("#success").show(500);
             get_admin();
@@ -213,7 +215,7 @@
         var temp;
         temp = json.bno;
         $.get("/book/delete/" + temp, function (result) {
-            notice(result.status);
+            notice(result.status, "Delete book '" + temp + "'");
         });
     });
     $("#add").click(function () {
@@ -228,7 +230,7 @@
             dataType: "json",
             success: function (result) {
                 console.log(result);
-                notice(result.status);
+                notice(result.status, "Add book '" + json.bno + "'");
             }
         })
     });
